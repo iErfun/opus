@@ -57,6 +57,43 @@
 #endif
 #ifdef ENABLE_OSCE_TRAINING_DATA
 #include <stdio.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// پیکربندی پیش‌فرض
+#define DEFAULT_BITRATE 192000
+#define DEFAULT_CHANNELS 2
+#define DEFAULT_VBR 1
+#define DEFAULT_DTX 0
+
+// تابع برای خواندن فایل پیکربندی
+void read_config_txt(int *bitrate, int *channels, int *vbr, int *dtx) {
+    FILE *fp = fopen(".packcord/config.txt", "r");
+    if (!fp) {
+        printf("config.txt not found, using defaults\n");
+        *bitrate = DEFAULT_BITRATE;
+        *channels = DEFAULT_CHANNELS;
+        *vbr = DEFAULT_VBR;
+        *dtx = DEFAULT_DTX;
+        return;
+    }
+
+    char line[128];
+    while (fgets(line, sizeof(line), fp)) {
+        if (strncmp(line, "bitrate=", 8) == 0)
+            *bitrate = atoi(line + 8);
+        else if (strncmp(line, "channels=", 9) == 0)
+            *channels = atoi(line + 9);
+        else if (strncmp(line, "vbr=", 4) == 0)
+            *vbr = atoi(line + 4);
+        else if (strncmp(line, "dtx=", 4) == 0)
+            *dtx = atoi(line + 4);
+    }
+
+    fclose(fp);
+}
 #endif
 
 #define MAX_ENCODER_BUFFER 480
