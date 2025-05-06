@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Checkout code with full history
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0  # Ensures all branches and history are available
 
@@ -33,7 +33,7 @@ jobs:
       run: make -j$(nproc)
 
     - name: Archive build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: opus-build
         path: .libs/  # or wherever the compiled .so/.a files go
