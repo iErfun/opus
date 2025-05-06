@@ -12,20 +12,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Checkout code with full history
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Ensures all branches and history are available
 
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y autoconf automake libtool pkg-config make gcc
-
-    - name: Configure and build
+    - name: Install build dependencies
       run: |
-        ./autogen.sh || true
-        ./configure --enable-custom-modes --with-pic
-        make -j$(nproc)
+        sudo apt-get update
+        sudo apt-get install -y autoconf automake libtool pkg-config make gcc
+
+    - name: Prepare build system
+      run: |
+        ./autogen.sh || true  # in case it's already bootstrapped
+
+    - name: Configure with custom modes
+      run: ./configure --enable-custom-modes --with-pic
+
+    - name: Build
+      run: make -j$(nproc)
 
     - name: Archive build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: opus-build
-        path: .libs/  # یا مسیر دلخواه دیگر به خروجی libopus
+        path: .libs/  # or wherever the compiled .so/.a files go
